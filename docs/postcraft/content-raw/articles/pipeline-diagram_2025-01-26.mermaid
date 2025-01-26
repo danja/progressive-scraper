@@ -1,0 +1,29 @@
+flowchart LR
+    %% Core Pipeline Flow
+    URL[URL Input] --> RC[Rate Controller]
+    RC --> Validator[URL Validator]
+    Validator --> Status[Status Checker]
+    Status --> Simple[HTML Extractor]
+    Simple --> Meta[Metadata Extractor]
+    Meta --> Detector[Dynamic Content Detector]
+    
+    %% Content Extraction Fork
+    Detector -->|Static| SimpleEx[Simple Content Extractor]
+    Detector -->|Dynamic| Headless[Headless Browser Extractor]
+    SimpleEx --> Store[Content Store]
+    Headless --> Store
+    Store -->|Feedback| RC
+
+    %% Support Services
+    subgraph Support
+        direction TB
+        L[Logger]
+        M[Metrics]
+        E[Error Handler]
+    end
+
+    %% Styling
+    classDef primary fill:#f9f,stroke:#333,stroke-width:2px
+    classDef support fill:#bbf,stroke:#333,stroke-width:1px
+    class URL,RC,Validator,Status,Simple,Meta,Detector,SimpleEx,Headless,Store primary
+    class L,M,E support
